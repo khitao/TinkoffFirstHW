@@ -3,6 +3,7 @@ package ru.khodov;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Getter
@@ -10,13 +11,13 @@ import java.util.*;
 public class Weather {
 
     private final UUID regionId;
-    private String regionName;
-    private int temperature;
-    private Date dateTime;
+    private final String regionName;
+    private double temperature;
+    private LocalDateTime dateTime;
 
-    private static Map<String, UUID> regionIdMap = new HashMap<>();
+    private static Map<String, UUID> uniqueIdMap = new HashMap<>();
 
-    public Weather(String regionName, int temperature, Date dateTime) {
+    public Weather(String regionName, double temperature, LocalDateTime dateTime) {
         this.regionId = generateRegionId(regionName);
         this.regionName = regionName;
         this.temperature = temperature;
@@ -24,11 +25,11 @@ public class Weather {
     }
 
     private UUID generateRegionId(String regionName) {
-        if (regionIdMap.containsKey(regionName)) {
-            return regionIdMap.get(regionName);
+        if (uniqueIdMap.containsKey(regionName)) {
+            return uniqueIdMap.get(regionName);
         } else {
             UUID regionId = UUID.randomUUID();
-            regionIdMap.put(regionName, regionId);
+            uniqueIdMap.put(regionName, regionId);
             return regionId;
         }
     }

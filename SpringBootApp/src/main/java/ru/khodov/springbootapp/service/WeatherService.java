@@ -7,7 +7,6 @@ import ru.khodov.springbootapp.model.Weather;
 import ru.khodov.springbootapp.util.DeleteException;
 import ru.khodov.springbootapp.util.DuplicateRegionException;
 import ru.khodov.springbootapp.util.RegionNotFoundException;
-import ru.khodov.springbootapp.util.SuccessCreateException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -20,10 +19,9 @@ public class WeatherService {
 
 
     public double getRegionTemperatureForTheCurrentDate(@NonNull String regionName, @NonNull LocalDateTime dateTime) {
-        String regionNameWithoutSpaces = regionName.replace(" ", "");
 
-        if (weatherData.containsKey(regionNameWithoutSpaces)) {
-            return weatherData.get(regionNameWithoutSpaces)
+        if (weatherData.containsKey(regionName)) {
+            return weatherData.get(regionName)
                     .stream()
                     .filter(weather -> weather.getDateTime().equals(dateTime))
                     .mapToDouble(Weather::getTemperature)
@@ -36,51 +34,74 @@ public class WeatherService {
     }
 
 
-    public void addNewRegion(@NonNull String regionName, @NonNull Weather weather) {
-        String regionNameWithoutSpaces = regionName.replace(" ", "");
+    public Weather addNewRegion(@NonNull String regionName, @NonNull Weather weather) {
 
-        if (!weatherData.containsKey(regionNameWithoutSpaces)) {
-            weatherData.put(regionNameWithoutSpaces, new ArrayList<>(Arrays.asList(weather)));
-            throw new SuccessCreateException("Регион успешно добавлен");
+        if (!weatherData.containsKey(regionName)) {
+
+            ArrayList<Weather> arr = new ArrayList<>(1);
+            arr.add(weather);
+            weatherData.put(regionName, arr);
+
+            return weather;
+
         } else {
             throw new DuplicateRegionException("Регион с таким именем уже существует");
         }
 
     }
 
-    public void updateTemperatureInRegion(@NonNull String regionName, @NonNull LocalDateTime dateTime, double temperature) {
-        String regionNameWithoutSpaces = regionName.replace(" ", "");
+    public Weather updateTemperatureInRegion(@NonNull String regionName, @NonNull LocalDateTime dateTime, double temperature) {
 
-        if (weatherData.containsKey(regionNameWithoutSpaces)) {
+        if (weatherData.containsKey(regionName)) {
 
-            Weather weather = weatherData.get(regionNameWithoutSpaces).stream()
+            Weather weather = weatherData.get(regionName).stream()
                     .filter(w -> w.getDateTime().equals(dateTime)).findAny().orElse(null);
 
             if (weather != null) {
                 weather.setTemperature(temperature);
+                return weather;
             } else {
-                List<Weather> regionWeather = weatherData.computeIfAbsent(regionNameWithoutSpaces, key -> new ArrayList<>());
-                regionWeather.add(new Weather(regionNameWithoutSpaces, temperature, dateTime));
+                List<Weather> regionWeather = weatherData.computeIfAbsent(regionName, key -> new ArrayList<>());
+
+                Weather newWeather = new Weather(regionName, temperature, dateTime);
+
+                LocalDateTime localDateTimeNow = LocalDateTime.now();
+                newWeather.setCreationDate(localDateTimeNow);
+                newWeather.setModificationDate(localDateTimeNow);
+
+                regionWeather.add(newWeather);
 
                 throw new RegionNotFoundException("Региона с данными параметрами нет, но мы его добавили");
             }
 
         } else {
-            weatherData.put(regionNameWithoutSpaces, new ArrayList<>(Arrays.asList(new Weather(regionNameWithoutSpaces, temperature, dateTime))));
+
+            ArrayList<Weather> arr = new ArrayList<>(1);
+
+            Weather newWeather = new Weather(regionName, temperature, dateTime);
+
+            LocalDateTime localDateTimeNow = LocalDateTime.now();
+            newWeather.setCreationDate(localDateTimeNow);
+            newWeather.setModificationDate(localDateTimeNow);
+
+            arr.add(newWeather);
+            weatherData.put(regionName, arr);
+
+
             throw new RegionNotFoundException("Региона с данными параметрами нет, но мы его добавили");
         }
     }
 
     public void deleteRegion(@NonNull String regionName) {
-        String regionNameWithoutSpaces = regionName.replace(" ", "");
 
-        if (weatherData.containsKey(regionNameWithoutSpaces)) {
-            weatherData.remove(regionNameWithoutSpaces);
+        if (weatherData.containsKey(regionName)) {
+            weatherData.remove(regionName);
+
             throw new DeleteException("Регион успешно удалён");
         } else {
             throw new RegionNotFoundException("Региона с таким именем нет. Мы не можем его удалить.");
         }
     }
 
-
 }
+

@@ -1,0 +1,142 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/weather/{regionName}:
+    get:
+      tags:
+        - weather-controller
+      operationId: getTemperatureByRegionNameAndDate
+      parameters:
+        - name: regionName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dateTime
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
+    put:
+      tags:
+        - weather-controller
+      operationId: updateRegionTemperature
+      parameters:
+        - name: regionName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRegionTemperatureDto'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WeatherDto'
+    post:
+      tags:
+        - weather-controller
+      operationId: addNewRegion
+      parameters:
+        - name: regionName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Weather'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WeatherDto'
+    delete:
+      tags:
+        - weather-controller
+      operationId: deleteRegion
+      parameters:
+        - name: regionName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+components:
+  schemas:
+    UpdateRegionTemperatureDto:
+      type: object
+      properties:
+        dateTime:
+          type: string
+          format: date-time
+        temperature:
+          type: number
+          format: double
+    WeatherDto:
+      type: object
+      properties:
+        regionId:
+          type: string
+          format: uuid
+        regionName:
+          type: string
+        temperature:
+          type: number
+          format: double
+        dateTime:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+    Weather:
+      type: object
+      properties:
+        regionId:
+          type: string
+          format: uuid
+        regionName:
+          type: string
+        temperature:
+          type: number
+          format: double
+        dateTime:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time

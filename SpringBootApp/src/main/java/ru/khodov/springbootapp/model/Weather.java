@@ -20,6 +20,8 @@ public class Weather {
     private final String regionName;
     private double temperature;
     private LocalDateTime dateTime;
+    private LocalDateTime creationDate;
+    private LocalDateTime modificationDate;
 
     private static Map<String, UUID> uniqueIdMap = new HashMap<>();
 

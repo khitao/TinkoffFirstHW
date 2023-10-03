@@ -62,7 +62,14 @@ public class WeatherService {
                 return weather;
             } else {
                 List<Weather> regionWeather = weatherData.computeIfAbsent(regionName, key -> new ArrayList<>());
-                regionWeather.add(new Weather(regionName, temperature, dateTime));
+
+                Weather newWeather = new Weather(regionName, temperature, dateTime);
+
+                LocalDateTime localDateTimeNow = LocalDateTime.now();
+                newWeather.setCreationDate(localDateTimeNow);
+                newWeather.setModificationDate(localDateTimeNow);
+
+                regionWeather.add(newWeather);
 
                 throw new RegionNotFoundException("Региона с данными параметрами нет, но мы его добавили");
             }
@@ -70,7 +77,14 @@ public class WeatherService {
         } else {
 
             ArrayList<Weather> arr = new ArrayList<>(1);
-            arr.add(new Weather(regionName, temperature, dateTime));
+
+            Weather newWeather = new Weather(regionName, temperature, dateTime);
+
+            LocalDateTime localDateTimeNow = LocalDateTime.now();
+            newWeather.setCreationDate(localDateTimeNow);
+            newWeather.setModificationDate(localDateTimeNow);
+
+            arr.add(newWeather);
             weatherData.put(regionName, arr);
 
 

@@ -38,7 +38,7 @@ public class WeatherController {
         createdWeather.setCreationDate(localDateTimeNow);
         createdWeather.setModificationDate(localDateTimeNow);
 
-        WeatherDto responseDto = new WeatherDto();
+        WeatherDto responseDto = new WeatherDto(createdWeather.getRegionId(), createdWeather.getRegionName(), createdWeather.getTemperature(), createdWeather.getDateTime());
         responseDto.setCreationDate(createdWeather.getCreationDate());
         responseDto.setModificationDate(createdWeather.getModificationDate());
 
@@ -55,7 +55,7 @@ public class WeatherController {
 
         updateWeather.setModificationDate(LocalDateTime.now());
 
-        WeatherDto responseDto = new WeatherDto();
+        WeatherDto responseDto = new WeatherDto(updateWeather.getRegionId(), updateWeather.getRegionName(), updateWeather.getTemperature(), updateWeather.getDateTime());
         responseDto.setCreationDate(updateWeather.getCreationDate());
         responseDto.setModificationDate(updateWeather.getModificationDate());
 

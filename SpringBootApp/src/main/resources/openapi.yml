@@ -103,6 +103,17 @@ components:
     WeatherDto:
       type: object
       properties:
+        regionId:
+          type: string
+          format: uuid
+        regionName:
+          type: string
+        temperature:
+          type: number
+          format: double
+        dateTime:
+          type: string
+          format: date-time
         creationDate:
           type: string
           format: date-time
@@ -129,4 +140,3 @@ components:
         modificationDate:
           type: string
           format: date-time
-

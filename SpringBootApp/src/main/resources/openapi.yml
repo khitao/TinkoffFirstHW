@@ -89,6 +89,24 @@ paths:
       responses:
         200:
           description: OK
+  /weather_api/current/{location}:
+    get:
+      tags:
+        - weather-api-controller
+      operationId: getCurrentWeather
+      parameters:
+        - name: location
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WeatherApi'
 components:
   schemas:
     UpdateRegionTemperatureDto:
@@ -140,3 +158,65 @@ components:
         modificationDate:
           type: string
           format: date-time
+    Condition:
+      type: object
+      properties:
+        text:
+          type: string
+    Current:
+      type: object
+      properties:
+        last_updated:
+          type: string
+        temp_c:
+          type: number
+          format: double
+        is_day:
+          type: integer
+          format: int32
+        condition:
+          $ref: '#/components/schemas/Condition'
+        wind_kph:
+          type: number
+          format: double
+        pressure_mb:
+          type: number
+          format: double
+        precip_mm:
+          type: number
+          format: double
+        humidity:
+          type: integer
+          format: int32
+        cloud:
+          type: integer
+          format: int32
+        feelslike_c:
+          type: number
+          format: double
+        vis_km:
+          type: number
+          format: double
+        gust_kph:
+          type: number
+          format: double
+    Location:
+      type: object
+      properties:
+        name:
+          type: string
+        region:
+          type: string
+        country:
+          type: string
+        tz_id:
+          type: string
+        localtime:
+          type: string
+    WeatherApi:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/Location'
+        current:
+          $ref: '#/components/schemas/Current'

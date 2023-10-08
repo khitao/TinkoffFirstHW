@@ -30,4 +30,22 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(ManyRequestsException exception) {
+        log.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.TOO_MANY_REQUESTS);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(BadRequestToWeatherApiException exception) {
+        log.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(exception.getMessage(), exception.getStatusCode());
+    }
+
+
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<String> handleException(Throwable exception) {
+        log.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

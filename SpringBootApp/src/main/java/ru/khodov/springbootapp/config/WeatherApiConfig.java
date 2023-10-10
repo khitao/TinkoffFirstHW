@@ -1,5 +1,6 @@
 package ru.khodov.springbootapp.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +23,15 @@ public class WeatherApiConfig {
         return RateLimiter.of("weatherApi", config);
     }
 
+
+
     @Bean
-    public WebClient webClient() {
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
+    @Bean
+    public WebClient weatherApiClient() {
         return WebClient.builder()
                 .baseUrl("https://api.weatherapi.com/v1")
                 .build();

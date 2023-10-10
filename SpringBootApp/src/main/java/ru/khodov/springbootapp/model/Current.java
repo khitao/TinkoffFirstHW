@@ -1,21 +1,21 @@
 package ru.khodov.springbootapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Current {
-    private String last_updated;
-    private double temp_c;
-    private int is_day;
-    private Condition condition;
-    private double wind_kph;
-    private double pressure_mb;
-    private double precip_mm;
-    private int humidity;
-    private int cloud;
-    private double feelslike_c;
-    private double vis_km;
-    private double gust_kph;
+public record Current(
+
+        String last_updated,
+        double temp_c,
+        int is_day,
+        Condition condition,
+        double wind_kph,
+        double pressure_mb,
+        double precip_mm,
+        int humidity,
+        int cloud,
+        double feelslike_c,
+        double vis_km,
+        double gust_kph) {
 }
+

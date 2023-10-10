@@ -2,13 +2,10 @@ package ru.khodov.springbootapp.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -31,12 +28,12 @@ public class WeatherApiService {
 
     public WeatherApiService(@Qualifier("weatherApiClient") WebClient weatherApiClient, RateLimiter rateLimiter, ObjectMapper objectMapper) {
         this.weatherApiClient = weatherApiClient;
-          this.rateLimiter = rateLimiter;
+        this.rateLimiter = rateLimiter;
         this.objectMapper = objectMapper;
     }
 
 
-    public Mono<ResponseEntity<WeatherApi>> getCurrentWeather(String location) {
+    public Mono<WeatherApi> getCurrentWeather(String location) {
 
         boolean permission = rateLimiter.acquirePermission();
 
@@ -53,11 +50,14 @@ public class WeatherApiService {
                         .build())
                 .retrieve()
                 .bodyToMono(WeatherApi.class)
-                .map(weatherApi -> new ResponseEntity<>(weatherApi, HttpStatus.OK))
-                .onErrorResume(WebClientResponseException.class, e -> Mono.just(handleWebClientResponseException(e)));
+                .onErrorResume(WebClientResponseException.class, e -> {
+                    handleWebClientResponseException(e);
+                    return Mono.empty();
+                });
+
     }
 
-    private ResponseEntity<WeatherApi> handleWebClientResponseException(WebClientResponseException e) {
+    private void handleWebClientResponseException(WebClientResponseException e) {
 
         try {
             String errorResponseBody = e.getResponseBodyAsString();
@@ -78,4 +78,5 @@ public class WeatherApiService {
     }
 
 }
+
 

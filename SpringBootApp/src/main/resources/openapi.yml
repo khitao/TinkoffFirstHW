@@ -3,9 +3,166 @@ info:
   title: OpenAPI definition
   version: v0
 servers:
-  - url: http://localhost:8080
+  - url: 'http://localhost:8080'
 paths:
-  /api/weather/{regionName}:
+  '/weather-types/{id}':
+    get:
+      tags:
+        - weather-type-controller
+      operationId: getWeatherTypeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WeatherType'
+    put:
+      tags:
+        - weather-type-controller
+      operationId: updateWeatherType
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeatherType'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WeatherType'
+  '/city/{id}':
+    get:
+      tags:
+        - city-controller
+      operationId: getCityById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/City'
+    put:
+      tags:
+        - city-controller
+      operationId: updateCity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/City'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/City'
+    delete:
+      tags:
+        - city-controller
+      operationId: deleteCity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+  '/city-weather/{id}':
+    get:
+      tags:
+        - city-weather-controller
+      operationId: getCityWeatherById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CityWeather'
+    put:
+      tags:
+        - city-weather-controller
+      operationId: updateCityWeather
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CityWeather'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CityWeather'
+    delete:
+      tags:
+        - city-weather-controller
+      operationId: deleteCityWeather
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+  '/api/weather/{regionName}':
     get:
       tags:
         - weather-controller
@@ -23,7 +180,7 @@ paths:
             type: string
             format: date-time
       responses:
-        200:
+        '200':
           description: OK
           content:
             '*/*':
@@ -47,7 +204,7 @@ paths:
               $ref: '#/components/schemas/UpdateRegionTemperatureDto'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             '*/*':
@@ -70,7 +227,7 @@ paths:
               $ref: '#/components/schemas/Weather'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             '*/*':
@@ -87,9 +244,102 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
-  /weather_api/current/{location}:
+  /weather-types:
+    get:
+      tags:
+        - weather-type-controller
+      operationId: getAllWeatherTypes
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WeatherType'
+    post:
+      tags:
+        - weather-type-controller
+      operationId: createWeatherType
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeatherType'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WeatherType'
+  /city:
+    get:
+      tags:
+        - city-controller
+      operationId: getAllCities
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/City'
+    post:
+      tags:
+        - city-controller
+      operationId: createCity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/City'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/City'
+  /city-weather:
+    get:
+      tags:
+        - city-weather-controller
+      operationId: getAllCities_1
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CityWeather'
+    post:
+      tags:
+        - city-weather-controller
+      operationId: createCityWeather
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CityWeather'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CityWeather'
+  '/weather_api/current/{location}':
     get:
       tags:
         - weather-api-controller
@@ -101,7 +351,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             '*/*':
@@ -109,6 +359,38 @@ paths:
                 $ref: '#/components/schemas/WeatherApi'
 components:
   schemas:
+    WeatherType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+    City:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    CityWeather:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        city:
+          $ref: '#/components/schemas/City'
+        weatherType:
+          $ref: '#/components/schemas/WeatherType'
+        temperature:
+          type: number
+          format: double
+        dateTime:
+          type: string
+          format: date-time
     UpdateRegionTemperatureDto:
       type: object
       properties:
@@ -168,6 +450,7 @@ components:
       properties:
         last_updated:
           type: string
+          format: date-time
         temp_c:
           type: number
           format: double
@@ -213,6 +496,7 @@ components:
           type: string
         localtime:
           type: string
+          format: date-time
     WeatherApi:
       type: object
       properties:

@@ -1,0 +1,202 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Nikita Khodov
+      changes:
+        - createTable:
+            tableName: city
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 2
+      author: Nikita Khodov
+      changes:
+        - insert:
+            tableName: city
+            columns:
+              - column:
+                  name: name
+                  value: "Moscow"
+        - insert:
+            tableName: city
+            columns:
+              - column:
+                  name: name
+                  value: "Saint Petersburg"
+        - insert:
+            tableName: city
+            columns:
+              - column:
+                  name: name
+                  value: "Novosibirsk"
+
+  - changeSet:
+      id: 3
+      author: Nikita Khodov
+      changes:
+        - createTable:
+            tableName: weather_type
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 4
+      author: Nikita Khodov
+      changes:
+        - insert:
+            tableName: weather_type
+            columns:
+              - column:
+                  name: type
+                  value: "Sunny"
+        - insert:
+            tableName: weather_type
+            columns:
+              - column:
+                  name: type
+                  value: "Rainy"
+        - insert:
+            tableName: weather_type
+            columns:
+              - column:
+                  name: type
+                  value: "Snowy"
+
+  - changeSet:
+      id: 5
+      author: Nikita Khodov
+      changes:
+        - createTable:
+            tableName: city_weather
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: city_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: weather_type_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_weather_type
+                    references: weather_type(id)
+              - column:
+                  name: temperature
+                  type: FLOAT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 6
+      author: Nikita Khodov
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: city_weather
+            baseColumnNames: city_id
+            constraintName: fk_city
+            referencedTableName: city
+            referencedColumnNames: id
+            onDelete: cascade
+
+  - changeSet:
+      id: 7
+      author: Nikita Khodov
+      changes:
+        - insert:
+            tableName: city_weather
+            columns:
+              - column:
+                  name: city_id
+                  valueNumeric: 1
+              - column:
+                  name: weather_type_id
+                  valueNumeric: 1
+              - column:
+                  name: temperature
+                  valueNumeric: 20.5
+              - column:
+                  name: date_time
+                  valueDate: "2023-10-14 12:00:00"
+        - insert:
+            tableName: city_weather
+            columns:
+              - column:
+                  name: city_id
+                  valueNumeric: 2
+              - column:
+                  name: weather_type_id
+                  valueNumeric: 2
+              - column:
+                  name: temperature
+                  valueNumeric: 15.3
+              - column:
+                  name: date_time
+                  valueDate: "2023-10-14 12:00:00"
+        - insert:
+            tableName: city_weather
+            columns:
+              - column:
+                  name: city_id
+                  valueNumeric: 1
+              - column:
+                  name: weather_type_id
+                  valueNumeric: 2
+              - column:
+                  name: temperature
+                  valueNumeric: 15.3
+              - column:
+                  name: date_time
+                  valueDate: "2023-10-14 12:00:00"
+        - insert:
+            tableName: city_weather
+            columns:
+              - column:
+                  name: city_id
+                  valueNumeric: 3
+              - column:
+                  name: weather_type_id
+                  valueNumeric: 3
+              - column:
+                  name: temperature
+                  valueNumeric: -5.0
+              - column:
+                  name: date_time
+                  valueDate: "2023-10-14 12:00:00"

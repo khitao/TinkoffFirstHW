@@ -2,9 +2,9 @@ package ru.khodov.springbootapp.repositories;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.khodov.springbootapp.mapper.CityRowMapper;
 import ru.khodov.springbootapp.model.City;
 
 import java.util.List;
@@ -16,11 +16,11 @@ public class CityJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public List<City> getAllCities() {
-        return jdbcTemplate.query("SELECT * FROM city", new BeanPropertyRowMapper<>(City.class));
+        return jdbcTemplate.query("SELECT * FROM city",  new CityRowMapper());
     }
 
     public City getCityById(Long id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM city WHERE id = ?", new BeanPropertyRowMapper<>(City.class), id);
+        return jdbcTemplate.queryForObject("SELECT * FROM city WHERE id = ?", new CityRowMapper(), id);
     }
 
     public City createCity(City city) {

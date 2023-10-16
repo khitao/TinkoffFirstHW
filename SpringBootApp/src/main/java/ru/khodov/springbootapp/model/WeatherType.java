@@ -3,13 +3,13 @@ package ru.khodov.springbootapp.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-
+import lombok.NoArgsConstructor;
 
 
 @Entity
 @Table(name = "weather_type")
 @Data
+@NoArgsConstructor
 public class WeatherType {
 
     @Id

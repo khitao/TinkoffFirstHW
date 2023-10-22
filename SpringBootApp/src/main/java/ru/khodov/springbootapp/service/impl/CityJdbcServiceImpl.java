@@ -27,6 +27,9 @@ public class CityJdbcServiceImpl implements CityService {
         return cityJdbcRepository.getCityById(id);
     }
 
+    public Integer countByName(String name){
+        return cityJdbcRepository.countByName(name);
+    }
     @Override
     public City createCity(City city) {
         return cityJdbcRepository.createCity(city);

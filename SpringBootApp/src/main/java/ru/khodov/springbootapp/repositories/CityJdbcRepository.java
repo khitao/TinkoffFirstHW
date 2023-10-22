@@ -3,10 +3,13 @@ package ru.khodov.springbootapp.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.khodov.springbootapp.mapper.CityRowMapper;
 import ru.khodov.springbootapp.model.City;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,8 +26,22 @@ public class CityJdbcRepository {
         return jdbcTemplate.queryForObject("SELECT * FROM city WHERE id = ?", new CityRowMapper(), id);
     }
 
+    public Integer countByName(String name) {
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM city WHERE name = ?", Integer.class, name);
+        return count;
+    }
+
     public City createCity(City city) {
-        jdbcTemplate.update("INSERT INTO city (name) VALUES (?)", city.getName());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO city (name) VALUES (?)", new String[]{"id"});
+            ps.setString(1, city.getName());
+            return ps;
+        }, keyHolder);
+
+        Long generatedId = keyHolder.getKey().longValue();
+        city.setId(generatedId);
+
         return city;
     }
 

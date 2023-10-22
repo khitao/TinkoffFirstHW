@@ -200,3 +200,38 @@ databaseChangeLog:
               - column:
                   name: date_time
                   valueDate: "2023-10-14 12:00:00"
+  - changeSet:
+      id: 8
+      author: Nikita Khodov
+      changes:
+        - createIndex:
+            indexName: idx_city_name
+            tableName: city
+            columns:
+              - column:
+                  name: name
+
+  - changeSet:
+      id: 9
+      author: Nikita Khodov
+      changes:
+        - createIndex:
+            indexName: idx_city_weather_city_id_weather_id
+            tableName: city_weather
+            columns:
+              - column:
+                  name: city_id
+              - column:
+                  name: weather_type_id
+
+  - changeSet:
+      id: 10
+      author: Nikita Khodov
+      changes:
+        - createIndex:
+            indexName: idx_weather_type
+            tableName: weather_type
+            columns:
+              - column:
+                  name: type
+

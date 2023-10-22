@@ -26,6 +26,10 @@ public class WeatherTypeServiceImpl implements WeatherTypeService {
         return weatherTypeRepository.findById(id).orElseThrow();
     }
 
+    public Integer countByType(String type) {
+        return weatherTypeRepository.countByType(type);
+    }
+
     public WeatherType createWeatherType(WeatherType weatherType) {
         return weatherTypeRepository.save(weatherType);
     }

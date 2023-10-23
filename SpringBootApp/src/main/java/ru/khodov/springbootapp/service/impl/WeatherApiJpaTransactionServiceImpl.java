@@ -1,7 +1,8 @@
-package ru.khodov.springbootapp.service;
+package ru.khodov.springbootapp.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -10,28 +11,26 @@ import ru.khodov.springbootapp.model.City;
 import ru.khodov.springbootapp.model.CityWeather;
 import ru.khodov.springbootapp.model.WeatherApi;
 import ru.khodov.springbootapp.model.WeatherType;
-import ru.khodov.springbootapp.service.impl.CityServiceImpl;
-import ru.khodov.springbootapp.service.impl.CityWeatherServiceImpl;
-import ru.khodov.springbootapp.service.impl.WeatherTypeServiceImpl;
+import ru.khodov.springbootapp.service.WeatherApiTransactionService;
 import ru.khodov.springbootapp.util.EntityAlreadyExistsException;
 
 
 @Service
-public class WeatherApiJpaTransactionService {
+@Qualifier("weatherApiJpaTransactionServiceImpl")
+public class WeatherApiJpaTransactionServiceImpl implements WeatherApiTransactionService {
 
     private final CityServiceImpl cityService;
     private final CityWeatherServiceImpl cityWeatherService;
     private final WeatherTypeServiceImpl weatherTypeService;
-    private final Logger logger = LoggerFactory.getLogger(WeatherApiJpaTransactionService.class);
+    private final Logger logger = LoggerFactory.getLogger(WeatherApiJpaTransactionServiceImpl.class);
 
-    public WeatherApiJpaTransactionService(CityServiceImpl cityService, CityWeatherServiceImpl cityWeatherService,
-                                           WeatherTypeServiceImpl weatherTypeService) {
+    public WeatherApiJpaTransactionServiceImpl(CityServiceImpl cityService, CityWeatherServiceImpl cityWeatherService, WeatherTypeServiceImpl weatherTypeService) {
         this.cityService = cityService;
         this.cityWeatherService = cityWeatherService;
         this.weatherTypeService = weatherTypeService;
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = EntityAlreadyExistsException.class)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void addDataFromWeatherApi(WeatherApi weatherApi) {
         try {
             String name = weatherApi.location().name();

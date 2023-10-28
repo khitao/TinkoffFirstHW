@@ -30,6 +30,14 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    public ResponseEntity<String> handleEntityAlreadyExistsException(EntityAlreadyExistsException exception) {
+        log.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler
     public ResponseEntity<String> handleException(ManyRequestsException exception) {
         log.error(exception.getMessage(), exception);

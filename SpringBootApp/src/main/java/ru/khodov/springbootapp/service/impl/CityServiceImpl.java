@@ -24,6 +24,10 @@ public class CityServiceImpl implements CityService {
         return cityRepository.findById(id).orElseThrow();
     }
 
+    public Integer countByName(String name){
+        return cityRepository.countByName(name);
+    }
+
     public City createCity(City city) {
         return cityRepository.save(city);
     }

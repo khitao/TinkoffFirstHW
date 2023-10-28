@@ -27,6 +27,10 @@ public class WeatherTypeJdbcServiceImpl implements WeatherTypeService {
         return weatherTypeJdbcRepository.getWeatherTypeById(id);
     }
 
+    public Integer countByType(String type) {
+        return weatherTypeJdbcRepository.countByType(type);
+    }
+
     @Override
     public WeatherType createWeatherType(WeatherType weatherType) {
         return weatherTypeJdbcRepository.createWeatherType(weatherType);

@@ -4,4 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.khodov.springbootapp.model.WeatherType;
 
 public interface WeatherTypeRepository extends JpaRepository<WeatherType, Long> {
+    Integer countByType(String name);
 }

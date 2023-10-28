@@ -2,10 +2,13 @@ package ru.khodov.springbootapp.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.khodov.springbootapp.mapper.WeatherTypeRowMapper;
 import ru.khodov.springbootapp.model.WeatherType;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,8 +26,22 @@ public class WeatherTypeJdbcRepository {
     }
 
     public WeatherType createWeatherType(WeatherType weatherType) {
-        jdbcTemplate.update("INSERT INTO weather_type (name) VALUES (?)", weatherType.getType());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO weather_type (type) VALUES (?)", new String[]{"id"});
+            ps.setString(1, weatherType.getType());
+            return ps;
+        }, keyHolder);
+
+        Long generatedId = keyHolder.getKey().longValue();
+        weatherType.setId(generatedId);
+
         return weatherType;
+    }
+
+    public Integer countByType(String type) {
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM weather_type WHERE type = ?", Integer.class, type);
+        return count;
     }
 
     public WeatherType updateWeatherType(Long id, WeatherType updatedWeatherType) {

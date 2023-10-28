@@ -40,7 +40,7 @@ public class CityWeatherJdbcRepository {
 
 
     public CityWeather createCityWeather(CityWeather cityWeather) {
-        jdbcTemplate.update("INSERT INTO city_weather (date, temperature, city_id, weather_type_id) VALUES (?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO city_weather (date_time, temperature, city_id, weather_type_id) VALUES (?, ?, ?, ?)",
                 cityWeather.getDateTime(), cityWeather.getTemperature(), cityWeather.getCity().getId(), cityWeather.getWeatherType().getId());
         return cityWeather;
     }

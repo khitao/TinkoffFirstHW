@@ -3,6 +3,8 @@ package ru.khodov.springbootapp.service;
 
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
+import ru.khodov.springbootapp.dto.WeatherDto;
+import ru.khodov.springbootapp.dto.WeatherRequestDto;
 import ru.khodov.springbootapp.model.Weather;
 import ru.khodov.springbootapp.util.DeleteException;
 import ru.khodov.springbootapp.util.DuplicateRegionException;
@@ -34,15 +36,21 @@ public class WeatherService {
     }
 
 
-    public Weather addNewRegion(@NonNull String regionName, @NonNull Weather weather) {
+    public WeatherDto addNewRegion(@NonNull String regionName, @NonNull WeatherRequestDto weatherRequestDto) {
 
         if (!weatherData.containsKey(regionName)) {
+
+            Weather weather = new Weather(regionName, weatherRequestDto.getTemperature(), weatherRequestDto.getDateTime());
+
+            LocalDateTime localDateTimeNow = LocalDateTime.now();
+            weather.setCreationDate(localDateTimeNow);
+            weather.setModificationDate(localDateTimeNow);
 
             ArrayList<Weather> arr = new ArrayList<>(1);
             arr.add(weather);
             weatherData.put(regionName, arr);
 
-            return weather;
+            return new WeatherDto(weather.getRegionName(), weather.getTemperature());
 
         } else {
             throw new DuplicateRegionException("Регион с таким именем уже существует");

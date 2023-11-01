@@ -33,7 +33,7 @@ public class WeatherApiService {
     }
 
 
-    public Mono<WeatherApi> getCurrentWeather(String location) {
+    public WeatherApi getCurrentWeather(String location) {
 
         boolean permission = rateLimiter.acquirePermission();
 
@@ -53,7 +53,7 @@ public class WeatherApiService {
                 .onErrorResume(WebClientResponseException.class, e -> {
                     handleWebClientResponseException(e);
                     return Mono.empty();
-                });
+                }).block();
 
     }
 

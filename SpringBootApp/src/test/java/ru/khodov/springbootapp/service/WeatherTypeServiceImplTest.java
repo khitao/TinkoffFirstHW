@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.jdbc.Sql;
+import ru.khodov.springbootapp.AbstractSingletonPostgresContainer;
 import ru.khodov.springbootapp.model.WeatherType;
 import ru.khodov.springbootapp.repositories.WeatherTypeRepository;
 
@@ -17,12 +16,10 @@ import java.util.List;
 
 
 @SpringBootTest
-@Testcontainers
-public class WeatherTypeServiceImpl {
+@Sql(scripts = "/clean-up.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+public class WeatherTypeServiceImplTest extends AbstractSingletonPostgresContainer {
 
-    @Container
-    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
-
+    private static final String WEATHER_TYPE = "Sunny";
 
     @Qualifier("jpaWeatherTypeService")
     @Autowired
@@ -31,24 +28,6 @@ public class WeatherTypeServiceImpl {
     @SpyBean
     private WeatherTypeRepository weatherTypeRepository;
 
-    private static final String WEATHER_TYPE = "Sunny";
-
-
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
-
-    @BeforeEach
-    public void cleanUp() {
-        weatherTypeRepository.deleteAll();
-
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
 
     @Test
     void getAllWeatherTypes_Test() {

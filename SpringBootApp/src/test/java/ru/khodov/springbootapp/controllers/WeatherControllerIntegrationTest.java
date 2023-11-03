@@ -36,7 +36,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @WebMvcTest(WeatherController.class)
-public class WeatherControllerIT {
+public class WeatherControllerIntegrationTest {
+
+
+    private static final String REGION_NAME = "Moscow";
+    private static final LocalDateTime DATE_TIME = LocalDateTime.of(2023, 10, 30, 10, 9, 21);
+    private static final double TEMPERATURE = 1.0;
 
 
     @Autowired
@@ -49,14 +54,11 @@ public class WeatherControllerIT {
     private ObjectMapper objectMapper;
 
 
-    private static final String REGION_NAME = "Moscow";
-    private static final LocalDateTime DATE_TIME = LocalDateTime.of(2023, 10, 30, 10, 9, 21);
-    private static final double TEMPERATURE = 1.0;
-
     @Test
     void getTemperatureByRegionNameAndDate_Test() throws Exception {
 
-        when(weatherService.getRegionTemperatureForTheCurrentDate(REGION_NAME, DATE_TIME)).thenReturn(TEMPERATURE);
+        given(weatherService.getRegionTemperatureForTheCurrentDate(REGION_NAME, DATE_TIME)).willReturn(TEMPERATURE);
+
         var requestBuilder = get("/api/weather/" + REGION_NAME).param("dateTime", String.valueOf(DATE_TIME));
 
         this.mockMvc.perform(requestBuilder)
@@ -65,13 +67,14 @@ public class WeatherControllerIT {
                         content().string(String.valueOf(TEMPERATURE))
                 );
 
-        verify(weatherService).getRegionTemperatureForTheCurrentDate(REGION_NAME,DATE_TIME);
+        verify(weatherService).getRegionTemperatureForTheCurrentDate(REGION_NAME, DATE_TIME);
     }
 
     @Test
     void getTemperatureByRegionNameAndDate_Test_RegionNotFoundException() throws Exception {
 
-        when(weatherService.getRegionTemperatureForTheCurrentDate(REGION_NAME, DATE_TIME)).thenThrow(new RegionNotFoundException("Такого региона не существует"));
+        given(weatherService.getRegionTemperatureForTheCurrentDate(REGION_NAME, DATE_TIME)).willThrow(new RegionNotFoundException("Такого региона не существует"));
+
         var requestBuilder = get("/api/weather/" + REGION_NAME).param("dateTime", String.valueOf(DATE_TIME));
 
 
@@ -80,7 +83,7 @@ public class WeatherControllerIT {
                         status().isNotFound(),
                         content().string("Такого региона не существует"));
 
-        verify(weatherService).getRegionTemperatureForTheCurrentDate(REGION_NAME,DATE_TIME);
+        verify(weatherService).getRegionTemperatureForTheCurrentDate(REGION_NAME, DATE_TIME);
     }
 
     @Test
@@ -97,12 +100,14 @@ public class WeatherControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody);
 
-        MvcResult mvcResult = this.mockMvc.perform(requestBuilder).andExpect(status().isCreated())
+        MvcResult mvcResult = this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.regionName").value(REGION_NAME))
+                .andExpect(jsonPath("$.temperature").value(TEMPERATURE))
                 .andReturn();
 
-        String request = mvcResult.getResponse().getContentAsString();
 
-        assertThat(request).isEqualToIgnoringWhitespace(objectMapper.writeValueAsString(weatherDto));
+        assertThat("application/json").isEqualTo(mvcResult.getResponse().getContentType());
 
         verify(weatherService).addNewRegion(REGION_NAME, weatherRequestDto);
     }

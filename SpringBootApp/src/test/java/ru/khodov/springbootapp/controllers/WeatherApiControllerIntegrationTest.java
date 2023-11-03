@@ -21,16 +21,19 @@ import ru.khodov.springbootapp.util.ManyRequestsException;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @WebMvcTest(WeatherApiController.class)
-public class WeatherApiControllerIT {
+public class WeatherApiControllerIntegrationTest {
+
+    private static final String LOCATION = "Moscow";
+    private static final LocalDateTime DATE_TIME = LocalDateTime.of(2023, 7, 20, 12, 20);
+    private static final double TEMPERATURE = 1.0;
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,9 +47,6 @@ public class WeatherApiControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String LOCATION = "Moscow";
-    private static final LocalDateTime DATE_TIME = LocalDateTime.now();
-    private static final double TEMPERATURE = 1.0;
 
     @Test
     void getCurrentWeather_Test() throws Exception {
@@ -54,21 +54,31 @@ public class WeatherApiControllerIT {
 
         given(weatherApiClient.getCurrentWeather(LOCATION)).willReturn(weather);
 
-        WeatherApi weatherApi = weatherApiClient.getCurrentWeather(LOCATION);
-
-        assertNotNull(weatherApi);
-
-        when(weatherApiClient.getCurrentWeather(LOCATION)).thenReturn(weather);
-
         var requestBuilder = get("/weather_api/current/" + LOCATION);
 
         MvcResult mvcResult = this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.location.name").value(LOCATION))
+                .andExpect(jsonPath("$.location.region").value(LOCATION))
+                .andExpect(jsonPath("$.location.country").value("Russia"))
+                .andExpect(jsonPath("$.location.localtime").value("2023-07-20 12:20"))
+                .andExpect(jsonPath("$.current.last_updated").value("2023-07-20 12:20"))
+                .andExpect(jsonPath("$.current.temp_c").value(TEMPERATURE))
+                .andExpect(jsonPath("$.current.is_day").value(1))
+                .andExpect(jsonPath("$.current.condition.text").value("Good"))
+                .andExpect(jsonPath("$.current.wind_kph").value(1.0))
+                .andExpect(jsonPath("$.current.pressure_mb").value(12))
+                .andExpect(jsonPath("$.current.precip_mm").value(777))
+                .andExpect(jsonPath("$.current.humidity").value(0))
+                .andExpect(jsonPath("$.current.cloud").value(0))
+                .andExpect(jsonPath("$.current.feelslike_c").value(0.0))
+                .andExpect(jsonPath("$.current.vis_km").value(1.0))
+                .andExpect(jsonPath("$.current.gust_kph").value(1.0))
                 .andReturn();
 
-        String request = mvcResult.getResponse().getContentAsString();
+        assertThat("application/json").isEqualTo(mvcResult.getResponse().getContentType());
 
-        assertThat(request).isEqualToIgnoringWhitespace(objectMapper.writeValueAsString(weather));
+        verify(weatherApiClient).getCurrentWeather(LOCATION);
 
     }
 

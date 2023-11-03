@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.jdbc.Sql;
+import ru.khodov.springbootapp.AbstractSingletonPostgresContainer;
 import ru.khodov.springbootapp.model.City;
 import ru.khodov.springbootapp.repositories.CityRepository;
 
@@ -19,10 +18,11 @@ import java.util.List;
 
 
 @SpringBootTest
-@Testcontainers
-public class CityServiceImplTest {
-    @Container
-    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
+@Sql(scripts = "/clean-up.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+public class CityServiceImplTest extends AbstractSingletonPostgresContainer {
+
+
+    private static final String CITY_NAME = "Moscow";
 
 
     @Qualifier("jpaCityService")
@@ -32,23 +32,6 @@ public class CityServiceImplTest {
     @SpyBean
     private CityRepository cityRepository;
 
-    private static final String CITY_NAME = "Moscow";
-
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
-
-    @BeforeEach
-    public void cleanUp() {
-        cityRepository.deleteAll();
-    }
-
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
 
 
     @Test

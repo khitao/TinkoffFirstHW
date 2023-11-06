@@ -235,3 +235,81 @@ databaseChangeLog:
               - column:
                   name: type
 
+  - changeSet:
+      id: 11
+      author: Nikita Khodov
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 12
+      author: Nikita Khodov
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+
+  - changeSet:
+      id: 13
+      author: Nikita Khodov
+      changes:
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+  - changeSet:
+      id: 14
+      author: Nikita Khodov
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO roles(id, name) VALUES (1, 'ROLE_USER');
+              INSERT INTO roles(id, name) VALUES (2, 'ROLE_ADMIN');
+              INSERT INTO users(username, password)
+              VALUES ('admin', '$2a$10$OjkJkUnx4PmpoMHrofZ.FeTHwq5XzixORaWF5bESNSLhi8qS0Nm8a');
+              INSERT INTO users_roles(user_id, role_id) VALUES (
+              (SELECT id FROM users WHERE username = 'admin'),
+              (SELECT id FROM roles WHERE name = 'ROLE_ADMIN'));
+

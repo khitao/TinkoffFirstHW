@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import org.springframework.test.web.servlet.MvcResult;
@@ -18,7 +19,7 @@ import ru.khodov.springbootapp.dto.WeatherDto;
 import ru.khodov.springbootapp.dto.WeatherRequestDto;
 
 import ru.khodov.springbootapp.service.WeatherService;
-import ru.khodov.springbootapp.util.DuplicateRegionException;
+import ru.khodov.springbootapp.util.DuplicateException;
 import ru.khodov.springbootapp.util.RegionNotFoundException;
 
 import java.time.LocalDateTime;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @WebMvcTest(WeatherController.class)
+@WithMockUser(roles = "ADMIN")
 public class WeatherControllerIntegrationTest {
 
 
@@ -119,7 +121,7 @@ public class WeatherControllerIntegrationTest {
 
         String requestBody = objectMapper.writeValueAsString(weatherRequestDto);
 
-        given(weatherService.addNewRegion(REGION_NAME, weatherRequestDto)).willThrow(new DuplicateRegionException("Регион с таким именем уже существует"));
+        given(weatherService.addNewRegion(REGION_NAME, weatherRequestDto)).willThrow(new DuplicateException("Регион с таким именем уже существует"));
 
         var requestBuilder = post("/api/weather/" + REGION_NAME)
                 .contentType(MediaType.APPLICATION_JSON)

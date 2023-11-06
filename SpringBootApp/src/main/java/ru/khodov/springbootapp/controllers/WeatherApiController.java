@@ -1,6 +1,7 @@
 package ru.khodov.springbootapp.controllers;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.khodov.springbootapp.model.WeatherApi;
 import ru.khodov.springbootapp.service.WeatherApiTransactionService;
@@ -20,6 +21,7 @@ public class WeatherApiController {
     }
 
     @GetMapping("/{location}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public WeatherApi getCurrentWeather(@PathVariable String location) {
         WeatherApi weatherApi = weatherApiClient.getCurrentWeather(location);
         weatherApiTransactionService.addDataFromWeatherApi(weatherApi);

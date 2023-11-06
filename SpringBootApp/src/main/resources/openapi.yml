@@ -224,7 +224,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Weather'
+              $ref: '#/components/schemas/WeatherRequestDto'
         required: true
       responses:
         '200':
@@ -339,6 +339,24 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/CityWeather'
+  /api/auth/registration:
+    post:
+      tags:
+        - authentication-controller
+      operationId: registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserDto'
   '/weather_api/current/{location}':
     get:
       tags:
@@ -403,43 +421,50 @@ components:
     WeatherDto:
       type: object
       properties:
-        regionId:
-          type: string
-          format: uuid
         regionName:
           type: string
         temperature:
           type: number
           format: double
-        dateTime:
-          type: string
-          format: date-time
-        creationDate:
-          type: string
-          format: date-time
-        modificationDate:
-          type: string
-          format: date-time
-    Weather:
+    WeatherRequestDto:
       type: object
       properties:
-        regionId:
-          type: string
-          format: uuid
-        regionName:
-          type: string
         temperature:
           type: number
           format: double
         dateTime:
           type: string
           format: date-time
-        creationDate:
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
           type: string
-          format: date-time
-        modificationDate:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
           type: string
-          format: date-time
+        password:
+          type: string
+        roles:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+    UserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
     Condition:
       type: object
       properties:
@@ -491,8 +516,6 @@ components:
         region:
           type: string
         country:
-          type: string
-        tz_id:
           type: string
         localtime:
           type: string

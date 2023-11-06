@@ -18,7 +18,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handleException(DuplicateRegionException exception) {
+    public ResponseEntity<String> handleException(DuplicateException exception) {
         log.error(exception.getMessage(), exception);
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }

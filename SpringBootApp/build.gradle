@@ -26,6 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.liquibase:liquibase-core'
     implementation 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.testcontainers:testcontainers:1.19.1'
     testImplementation 'org.testcontainers:postgresql:1.19.1'
     testImplementation 'org.testcontainers:junit-jupiter:1.19.1'
@@ -43,8 +44,22 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// Включение режима предупреждений для устаревших функций Gradle
+tasks.withType(JavaCompile) {
+    options.deprecation = true
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+// Задача для вывода предупреждений
+task showWarnings {
+    doLast {
+        gradle.startParameter.showDeprecationWarnings = true
+    }
 }

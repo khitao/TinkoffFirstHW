@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.khodov.springbootapp.dto.UpdateRegionTemperatureDto;
 import ru.khodov.springbootapp.dto.WeatherDto;
+import ru.khodov.springbootapp.dto.WeatherRequestDto;
 import ru.khodov.springbootapp.model.Weather;
 import ru.khodov.springbootapp.service.WeatherService;
 
@@ -23,25 +24,16 @@ public class WeatherController {
     private final WeatherService weatherService;
 
 
-    @GetMapping("{regionName}")
+    @GetMapping("/{regionName}")
     public double getTemperatureByRegionNameAndDate(@PathVariable String regionName, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
         return weatherService.getRegionTemperatureForTheCurrentDate(regionName, dateTime);
     }
 
 
     @PostMapping("/{regionName}")
-    public ResponseEntity<WeatherDto> addNewRegion(@PathVariable String regionName, @RequestBody Weather weather) {
+    public ResponseEntity<WeatherDto> addNewRegion(@PathVariable String regionName, @RequestBody WeatherRequestDto weatherRequestDto) {
 
-        Weather createdWeather = weatherService.addNewRegion(regionName, weather);
-
-        LocalDateTime localDateTimeNow = LocalDateTime.now();
-        createdWeather.setCreationDate(localDateTimeNow);
-        createdWeather.setModificationDate(localDateTimeNow);
-
-        WeatherDto responseDto = new WeatherDto(createdWeather.getRegionId(), createdWeather.getRegionName(), createdWeather.getTemperature(), createdWeather.getDateTime());
-        responseDto.setCreationDate(createdWeather.getCreationDate());
-        responseDto.setModificationDate(createdWeather.getModificationDate());
-
+        WeatherDto responseDto = weatherService.addNewRegion(regionName, weatherRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 
@@ -55,9 +47,7 @@ public class WeatherController {
 
         updateWeather.setModificationDate(LocalDateTime.now());
 
-        WeatherDto responseDto = new WeatherDto(updateWeather.getRegionId(), updateWeather.getRegionName(), updateWeather.getTemperature(), updateWeather.getDateTime());
-        responseDto.setCreationDate(updateWeather.getCreationDate());
-        responseDto.setModificationDate(updateWeather.getModificationDate());
+        WeatherDto responseDto = new WeatherDto(updateWeather.getRegionName(), updateWeather.getTemperature());
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

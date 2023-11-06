@@ -2,7 +2,6 @@ package ru.khodov.springbootapp.controllers;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 import ru.khodov.springbootapp.model.WeatherApi;
 import ru.khodov.springbootapp.service.WeatherApiTransactionService;
 import ru.khodov.springbootapp.service.WeatherApiService;
@@ -20,9 +19,11 @@ public class WeatherApiController {
         this.weatherApiTransactionService = weatherApiTransactionService;
     }
 
-    @GetMapping("{location}")
-    public Mono<WeatherApi> getCurrentWeather(@PathVariable String location) {
-        return weatherApiClient.getCurrentWeather(location).doOnNext(weatherApiTransactionService::addDataFromWeatherApi);
+    @GetMapping("/{location}")
+    public WeatherApi getCurrentWeather(@PathVariable String location) {
+        WeatherApi weatherApi = weatherApiClient.getCurrentWeather(location);
+        weatherApiTransactionService.addDataFromWeatherApi(weatherApi);
+        return weatherApi;
     }
 
 }

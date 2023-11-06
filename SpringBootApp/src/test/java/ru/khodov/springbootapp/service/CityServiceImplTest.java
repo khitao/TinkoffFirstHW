@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import ru.khodov.springbootapp.AbstractSingletonPostgresContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.khodov.springbootapp.model.City;
 import ru.khodov.springbootapp.repositories.CityRepository;
 
@@ -19,11 +23,17 @@ import java.util.List;
 
 @SpringBootTest
 @Sql(scripts = "/clean-up.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class CityServiceImplTest extends AbstractSingletonPostgresContainer {
+@Testcontainers
+public class CityServiceImplTest {
 
 
     private static final String CITY_NAME = "Moscow";
 
+    @Container
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("tinkoff")
+            .withUsername("postgres")
+            .withPassword("00130013");
 
     @Qualifier("jpaCityService")
     @Autowired
@@ -32,7 +42,12 @@ public class CityServiceImplTest extends AbstractSingletonPostgresContainer {
     @SpyBean
     private CityRepository cityRepository;
 
-
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.username", postgres::getUsername);
+    }
 
     @Test
     void getAllCities_Test() {

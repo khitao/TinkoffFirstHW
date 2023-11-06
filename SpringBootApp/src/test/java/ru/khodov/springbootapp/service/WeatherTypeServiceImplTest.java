@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import ru.khodov.springbootapp.AbstractSingletonPostgresContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.khodov.springbootapp.model.WeatherType;
 import ru.khodov.springbootapp.repositories.WeatherTypeRepository;
 
@@ -17,9 +21,17 @@ import java.util.List;
 
 @SpringBootTest
 @Sql(scripts = "/clean-up.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class WeatherTypeServiceImplTest extends AbstractSingletonPostgresContainer {
+@Testcontainers
+public class WeatherTypeServiceImplTest {
 
     private static final String WEATHER_TYPE = "Sunny";
+
+    @Container
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("tinkoff")
+            .withUsername("postgres")
+            .withPassword("00130013");
+
 
     @Qualifier("jpaWeatherTypeService")
     @Autowired
@@ -28,6 +40,12 @@ public class WeatherTypeServiceImplTest extends AbstractSingletonPostgresContain
     @SpyBean
     private WeatherTypeRepository weatherTypeRepository;
 
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.username", postgres::getUsername);
+    }
 
     @Test
     void getAllWeatherTypes_Test() {

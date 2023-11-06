@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import ru.khodov.springbootapp.AbstractSingletonPostgresContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.khodov.springbootapp.model.City;
 import ru.khodov.springbootapp.model.CityWeather;
 import ru.khodov.springbootapp.model.WeatherType;
@@ -21,13 +25,19 @@ import java.util.List;
 
 @SpringBootTest
 @Sql(scripts = "/clean-up.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class CityWeatherServiceImplTest  extends AbstractSingletonPostgresContainer {
+@Testcontainers
+public class CityWeatherServiceImplTest {
 
 
     private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2000, 1, 3, 20, 20, 20);
 
     private static final LocalDateTime NEW_LOCAL_DATE_TIME = LocalDateTime.of(2020, 1, 6, 20, 10, 20);
 
+    @Container
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("tinkoff")
+            .withUsername("postgres")
+            .withPassword("00130013");
 
     @Qualifier("jpaCityWeatherService")
     @Autowired
@@ -41,6 +51,14 @@ public class CityWeatherServiceImplTest  extends AbstractSingletonPostgresContai
 
     @SpyBean
     private WeatherTypeRepository weatherTypeRepository;
+
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.username", postgres::getUsername);
+    }
 
     @Test
     void getAllCityWeather_Test() {

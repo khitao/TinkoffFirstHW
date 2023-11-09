@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.khodov.springbootapp.model.Condition;
@@ -28,9 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc(printOnlyOnFailure = false)
+@AutoConfigureMockMvc(printOnlyOnFailure = false, addFilters = false)
 @WebMvcTest(WeatherApiController.class)
-@WithMockUser(roles = "ADMIN")
 public class WeatherApiControllerIntegrationTest {
 
     private static final String LOCATION = "Moscow";

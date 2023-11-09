@@ -43,7 +43,7 @@ public class WeatherController {
     }
 
     @PutMapping("/{regionName}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WeatherDto> updateRegionTemperature(@PathVariable String regionName, @RequestBody UpdateRegionTemperatureDto updateRegionTemperatureDto) {
 
         Weather updateWeather = weatherService.updateTemperatureInRegion(regionName, updateRegionTemperatureDto.getDateTime(), updateRegionTemperatureDto.getTemperature());
@@ -58,7 +58,7 @@ public class WeatherController {
 
 
     @DeleteMapping("/{regionName}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteRegion(@PathVariable String regionName) {
         weatherService.deleteRegion(regionName);
     }

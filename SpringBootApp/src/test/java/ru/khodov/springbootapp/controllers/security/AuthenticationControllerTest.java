@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.khodov.springbootapp.SpringBootAppApplicationTests;
 import ru.khodov.springbootapp.model.User;
 import ru.khodov.springbootapp.repositories.UserJpaRepository;
 
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
-public class AuthenticationControllerTest {
+public class AuthenticationControllerTest extends SpringBootAppApplicationTests {
 
     @Autowired
     private MockMvc mockMvc;

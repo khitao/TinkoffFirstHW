@@ -10,6 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest
 @Testcontainers
+public
 class SpringBootAppApplicationTests {
     @Container
     public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")

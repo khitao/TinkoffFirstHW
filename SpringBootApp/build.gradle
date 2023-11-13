@@ -50,16 +50,3 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-// Включение режима предупреждений для устаревших функций Gradle
-tasks.withType(JavaCompile) {
-    options.deprecation = true
-    options.compilerArgs << "-Xlint:deprecation"
-}
-
-// Задача для вывода предупреждений
-task showWarnings {
-    doLast {
-        gradle.startParameter.showDeprecationWarnings = true
-    }
-}

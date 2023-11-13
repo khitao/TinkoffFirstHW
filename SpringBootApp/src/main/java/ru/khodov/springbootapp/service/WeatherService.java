@@ -111,5 +111,9 @@ public class WeatherService {
         }
     }
 
+    public void deleteAllRegions() {
+        weatherData.clear();
+    }
+
 }
 

@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.khodov.springbootapp.SpringBootAppApplicationTests;
 import ru.khodov.springbootapp.service.WeatherApiTransactionService;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
+@ActiveProfiles("test")
 public class WeatherApiControllerTest extends SpringBootAppApplicationTests {
 
     private static final String LOCATION = "Moscow";

@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.khodov.springbootapp.SpringBootAppApplicationTests;
 import ru.khodov.springbootapp.dto.UpdateRegionTemperatureDto;
 import ru.khodov.springbootapp.dto.WeatherRequestDto;
 import ru.khodov.springbootapp.service.WeatherService;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
-public class WeatherControllerTest {
+public class WeatherControllerTest extends SpringBootAppApplicationTests {
 
     private static final String REGION_NAME = "Moscow";
     private static final String NEW_REGION_NAME = "London";

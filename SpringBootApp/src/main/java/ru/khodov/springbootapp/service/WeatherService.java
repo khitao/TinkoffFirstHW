@@ -7,7 +7,7 @@ import ru.khodov.springbootapp.dto.WeatherDto;
 import ru.khodov.springbootapp.dto.WeatherRequestDto;
 import ru.khodov.springbootapp.model.Weather;
 import ru.khodov.springbootapp.util.DeleteException;
-import ru.khodov.springbootapp.util.DuplicateRegionException;
+import ru.khodov.springbootapp.util.DuplicateException;
 import ru.khodov.springbootapp.util.RegionNotFoundException;
 
 import java.time.LocalDateTime;
@@ -53,7 +53,7 @@ public class WeatherService {
             return new WeatherDto(weather.getRegionName(), weather.getTemperature());
 
         } else {
-            throw new DuplicateRegionException("Регион с таким именем уже существует");
+            throw new DuplicateException("Регион с таким именем уже существует");
         }
 
     }
@@ -109,6 +109,10 @@ public class WeatherService {
         } else {
             throw new RegionNotFoundException("Региона с таким именем нет. Мы не можем его удалить.");
         }
+    }
+
+    public void deleteAllRegions() {
+        weatherData.clear();
     }
 
 }
